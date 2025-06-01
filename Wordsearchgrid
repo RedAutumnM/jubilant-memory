@@ -1,0 +1,76 @@
+def display_grid(grid):
+    print("\nWord Search Grid:")
+    for i, row in enumerate(grid):
+        print(f"{i:2} " + ' '.join(row))
+    print("   " + ' '.join([f"{j}" for j in range(len(grid[0]))]))
+
+
+def get_word_from_grid(grid, start, end):
+    x1, y1 = start
+    x2, y2 = end
+    dx = x2 - x1
+    dy = y2 - y1
+
+    length = max(abs(dx), abs(dy)) + 1
+
+    # Normalize direction
+    dx = (dx // abs(dx)) if dx != 0 else 0
+    dy = (dy // abs(dy)) if dy != 0 else 0
+
+    word = ''
+    for i in range(length):
+        x = x1 + i * dx
+        y = y1 + i * dy
+        if 0 <= x < len(grid) and 0 <= y < len(grid[0]):
+            word += grid[x][y]
+        else:
+            return ''
+    return word
+
+
+def word_search_solver(grid, word_list):
+    found_words = set()
+    while len(found_words) < len(word_list):
+        display_grid(grid)
+        print(f"Words to find: {[word for word in word_list if word not in found_words]}")
+        try:
+            start = tuple(map(int, input("Enter start position (row col): ").split()))
+            end = tuple(map(int, input("Enter end position (row col): ").split()))
+        except:
+            print("Invalid input. Please enter two integers separated by a space.")
+            continue
+
+        word = get_word_from_grid(grid, start, end)
+        reversed_word = word[::-1]
+
+        if word in word_list and word not in found_words:
+            print(f"✅ Found word: {word}")
+            found_words.add(word)
+        elif reversed_word in word_list and reversed_word not in found_words:
+            print(f"✅ Found word (reversed): {reversed_word}")
+            found_words.add(reversed_word)
+        else:
+            print("❌ Not a valid word or already found.")
+
+    print("\n🎉 All words found!")
+
+
+# Example usage
+grid = [
+    list("PYTHONABCDE"),
+    list("LOOPZZZZZZZZ"),
+    list("ZZZZDEBUGZZZ"),
+    list("ZZZZZZZZZZZZ"),
+    list("ZZFUNCTIONZZ"),
+    list("ZZZZZZZZZZZZ"),
+    list("ZZZZZZZZZZZZ"),
+    list("ZZZZZZZZZZZZ"),
+    list("ZZZZZZZZZZZZ"),
+    list("ZZZZZZZZZZZZ"),
+    list("ZZZZZZZZZZZZ"),
+    list("ZZZZZZZZZZZZ")
+]
+
+words = ["PYTHON", "DEBUG", "LOOP", "FUNCTION"]
+
+word_search_solver(grid, words)
