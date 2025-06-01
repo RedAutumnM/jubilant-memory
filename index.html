@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Word Search Solver</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    #grid {
+      display: grid;
+      margin: 20px auto;
+      gap: 2px;
+    }
+    .cell {
+      width: 40px;
+      height: 40px;
+      background: #f0f0f0;
+      border: 1px solid #ccc;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .selected {
+      background: lightblue;
+    }
+    .found {
+      background: lightgreen;
+    }
+    textarea {
+      width: 300px;
+      height: 100px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🧩 Word Search Solver</h1>
+
+  <div>
+    <label>Grid (comma-separated rows):</label><br>
+    <textarea id="gridInput">P,Y,T,H,O,N,A,B,C,D,E
+L,O,O,P,Z,Z,Z,Z,Z,Z,Z,Z
+Z,Z,Z,Z,D,E,B,U,G,Z,Z,Z
+Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z
+Z,Z,F,U,N,C,T,I,O,N,Z,Z</textarea><br>
+
+    <label>Words to find (comma-separated):</label><br>
+    <input type="text" id="wordListInput" value="PYTHON,DEBUG,LOOP,FUNCTION"><br><br>
+
+    <button onclick="initGrid()">Generate Grid</button>
+  </div>
+
+  <h3 id="wordListLabel">Words:</h3>
+  <div id="grid"></div>
+
+  <script>
+    let grid = [];
+    let wordsToFind = [];
+    let selected = [];
+    let found = new Set();
+
+    function initGrid() {
+      const input = document.getElementById('gridInput').value.trim();
+      const wordInput = document.getElementById('wordListInput').value.trim();
+      wordsToFind = wordInput.split(',').map(w => w.trim().toUpperCase());
+
+      grid = input.split('\n').map(row => row.split(',').map(c => c.trim().toUpperCase()));
+      selected = [];
+
+      const gridContainer = document.getElementById('grid');
+      gridContainer.innerHTML = '';
+      gridContainer.style.gridTemplateColumns = `repeat(${grid[0].length}, 40px)`;
+
+      grid.forEach((row, i) => {
+        row.forEach((char, j) => {
+          const cell = document.createElement('div');
+          cell.classList.add('cell');
+          cell.textContent = char;
+          cell.dataset.row = i;
+          cell.dataset.col = j;
+          cell.addEventListener('click', () => handleSelect(cell));
+          gridContainer.appendChild(cell);
+        });
+      });
+
+      updateWordListDisplay();
+    }
+
+    function updateWordListDisplay() {
+      const label = document.getElementById("wordListLabel");
+      const remaining = wordsToFind.filter(w => !found.has(w));
+      label.textContent = remaining.length === 0
+        ? "🎉 All words found!"
+        : "Words: " + remaining.join(', ');
+    }
+
+    function handleSelect(cell) {
+      cell.classList.add('selected');
+      selected.push(cell);
+
+      if (selected.length === 2) {
+        const [start, end] = selected;
+        const word = extractWord(start, end);
+        const reversed = word.split('').reverse().join('');
+
+        if (wordsToFind.includes(word) && !found.has(word)) {
+          found.add(word);
+          markFound(start, end);
+          alert(`✅ Found: ${word}`);
+        } else if (wordsToFind.includes(reversed) && !found.has(reversed)) {
+          found.add(reversed);
+          markFound(start, end);
+          alert(`✅ Found (reversed): ${reversed}`);
+        } else {
+          alert(`❌ Not a valid word: ${word}`);
+        }
+
+        clearSelection();
+        updateWordListDisplay();
+      }
+    }
+
+    function extractWord(startCell, endCell) {
+      const r1 = parseInt(startCell.dataset.row);
+      const c1 = parseInt(startCell.dataset.col);
+      const r2 = parseInt(endCell.dataset.row);
+      const c2 = parseInt(endCell.dataset.col);
+
+      const dx = Math.sign(r2 - r1);
+      const dy = Math.sign(c2 - c1);
+
+      let word = '';
+      let x = r1, y = c1;
+
+      while (true) {
+        word += grid[x][y];
+        if (x === r2 && y === c2) break;
+        x += dx;
+        y += dy;
+      }
+      return word;
+    }
+
+    function markFound(startCell, endCell) {
+      const r1 = parseInt(startCell.dataset.row);
+      const c1 = parseInt(startCell.dataset.col);
+      const r2 = parseInt(endCell.dataset.row);
+      const c2 = parseInt(endCell.dataset.col);
+
+      const dx = Math.sign(r2 - r1);
+      const dy = Math.sign(c2 - c1);
+
+      let x = r1, y = c1;
+      while (true) {
+        const selector = `[data-row="${x}"][data-col="${y}"]`;
+        document.querySelector(selector).classList.add('found');
+        if (x === r2 && y === c2) break;
+        x += dx;
+        y += dy;
+      }
+    }
+
+    function clearSelection() {
+      document.querySelectorAll('.selected').forEach(c => c.classList.remove('selected'));
+      selected = [];
+    }
+  </script>
+</body>
+</html>
