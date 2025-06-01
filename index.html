@@ -5,31 +5,74 @@
   <title>💖 Word Search 💖</title>
   <style>
     body {
-      font-family: sans-serif;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom right, #a18cd1, #fbc2eb);
+      color: #fff;
       text-align: center;
-      padding: 20px;
+      padding: 40px 20px;
     }
+
+    h1, h3 {
+      margin-bottom: 10px;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      border: none;
+      background-color: #ffb6c1;
+      color: #4b0082;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    }
+
+    button:hover {
+      background-color: #ff9eb3;
+    }
+
     #grid {
       display: grid;
-      margin: 20px auto;
-      gap: 2px;
+      margin: 30px auto;
+      gap: 4px;
+      border: 3px solid #ffd6e8;
+      border-radius: 10px;
+      padding: 10px;
+      background-color: #fff0f5;
+      width: max-content;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.15);
     }
+
     .cell {
       width: 40px;
       height: 40px;
-      background: #f0f0f0;
-      border: 1px solid #ccc;
+      background: #fff;
+      border: 2px solid #ffcce5;
+      border-radius: 6px;
       display: flex;
       justify-content: center;
       align-items: center;
       cursor: pointer;
       font-weight: bold;
+      color: #4b0082;
+      user-select: none;
+      transition: transform 0.1s ease;
     }
+
+    .cell:hover {
+      transform: scale(1.05);
+      background-color: #ffe4f0;
+    }
+
     .selected {
-      background: lightblue;
+      background-color: #dabfff;
     }
+
     .found {
-      background: lightgreen;
+      background-color: #b5ead7;
+      color: #2e8b57;
     }
   </style>
 </head>
@@ -110,7 +153,7 @@
       const label = document.getElementById("wordListLabel");
       const remaining = wordsToFind.filter(w => !found.has(w));
       label.textContent = remaining.length === 0
-        ? "🎉 All words found! By some trick you managed to find them all somehow. Now go to "
+        ? "🎉 All words found! 💖 You did it!"
         : "Words: " + remaining.join(', ');
     }
 
