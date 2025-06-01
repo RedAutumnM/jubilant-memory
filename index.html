@@ -110,7 +110,7 @@
       const label = document.getElementById("wordListLabel");
       const remaining = wordsToFind.filter(w => !found.has(w));
       label.textContent = remaining.length === 0
-        ? "🎉 All words found!"
+        ? "🎉 All words found! By some trick you managed to find them all somehow. Now go to "
         : "Words: " + remaining.join(', ');
     }
 
