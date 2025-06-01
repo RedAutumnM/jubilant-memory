@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Word Search Solver</title>
+  <title>💖 Word Search 💖</title>
   <style>
     body {
       font-family: sans-serif;
@@ -34,8 +34,8 @@
   </style>
 </head>
 <body>
-  <h1>💖 Word Search 💖</h1><br>
-  <h2>💖 Find words that could describe you 💖</h2>
+  <h1>💖 Word Search 💖</h1>
+  <h3>💖 Find words that could describe you, Kamakshi 💖</h3>
 
   <p><strong>Words to find:</strong> PRETTY, FUNNY, SMART, KIND, WEIRD, SWEET</p>
   <button onclick="initGrid()">Reset Grid</button>
@@ -44,18 +44,20 @@
   <div id="grid"></div>
 
   <script>
-    const rows = 10;
+    const rows = 12;
     const cols = 12;
+
     const wordsToPlace = [
-      { word: "PRETTY", row: 0, col: 0, dx: 0, dy: 1 },
-      { word: "FUNNY", row: 1, col: 0, dx: 0, dy: 1 },
-      { word: "SMART", row: 2, col: 0, dx: 0, dy: 1 },
-      { word: "KIND",  row: 2, col: 5, dx: 1, dy: 0 }, // vertical
-      { word: "WEIRD", row: 3, col: 3, dx: 0, dy: 1 },
-      { word: "SWEET", row: 4, col: 0, dx: 0, dy: 1 }
+      { word: "PRETTY", row: 0, col: 3, dx: 0, dy: 1 },  // row 0, horizontal
+      { word: "FUNNY", row: 3, col: 0, dx: 0, dy: 1 },   // row 3, horizontal
+      { word: "SMART", row: 6, col: 0, dx: 0, dy: 1 },   // row 6, horizontal — 'S' shared
+      { word: "KIND",  row: 2, col: 7, dx: 1, dy: 0 },   // vertical — shares 'I'
+      { word: "WEIRD", row: 5, col: 6, dx: 0, dy: 1 },   // row 5, horizontal — shares 'I' at (3,7)
+      { word: "SWEET", row: 9, col: 0, dx: 0, dy: 1 },   // row 9, horizontal — shares 'S'
     ];
-    let grid = [];
+
     const wordsToFind = ["PRETTY", "FUNNY", "SMART", "KIND", "WEIRD", "SWEET"];
+    let grid = [];
     let selected = [];
     let found = new Set();
 
@@ -69,11 +71,16 @@
         for (let i = 0; i < word.length; i++) {
           const r = row + i * dx;
           const c = col + i * dy;
-          grid[r][c] = word[i];
+          const current = grid[r][c];
+          const letter = word[i];
+          if (current && current !== letter) {
+            console.error(`Conflict at (${r},${c}): ${current} vs ${letter}`);
+          }
+          grid[r][c] = letter;
         }
       }
 
-      // Fill remaining cells with random letters
+      // Fill empty spaces with random letters
       for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
           if (!grid[r][c]) {
@@ -183,7 +190,6 @@
       selected = [];
     }
 
-    // Auto-load grid on page load
     window.onload = initGrid;
   </script>
 </body>
